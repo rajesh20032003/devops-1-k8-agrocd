@@ -1,0 +1,5 @@
+harbor-secrets.yaml
+db-cred.yaml
+*.pem
+*.key
+*.env

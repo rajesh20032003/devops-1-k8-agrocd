@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Pod 
+metadata: 
+  name: ins-pod
+  namespace: md 
+spec:
+  serviceAccountName: pod-inspector  
+  containers: 
+    - name: nginx 
+      image: nginx:1.27.0 
+      resources: 
+        limits: 
+          cpu: "500m"
+          memory: "128Mi" 
+      ports: 
+        - containerPort: 80 
