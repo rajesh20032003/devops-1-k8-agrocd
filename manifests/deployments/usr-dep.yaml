@@ -13,6 +13,10 @@ spec:
     labels:
       app: user-service
    spec:
+    initContainers:
+     - name: wait-for-postgres
+       image: busybox
+       command: ['sh','-c','until nc -z postgres-service 5432; do echo "waiting for postgres..."; sleep 2; done; echo "postgres is ready!"']
     imagePullSecrets:
       - name: harbor-cred
     containers:

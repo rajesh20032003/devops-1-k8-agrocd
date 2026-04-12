@@ -4,7 +4,7 @@ metadata:
   name: allow-dns-egress
   namespace: md
 spec:
-  podSelector: {}
+  podSelector: { }
   policyTypes:
   - Egress
   egress:

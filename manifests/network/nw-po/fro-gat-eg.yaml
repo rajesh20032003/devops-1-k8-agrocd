@@ -16,4 +16,5 @@ spec:
          app: gateway 
     ports: 
      - port: 3000  
+
    
