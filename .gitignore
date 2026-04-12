@@ -3,3 +3,5 @@ db-cred.yaml
 *.pem
 *.key
 *.env
+harbor-secrets.yaml
+db-cred.yaml
