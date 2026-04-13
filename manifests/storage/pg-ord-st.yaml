@@ -40,6 +40,7 @@ spec:
   - metadata:
       name: postgres-storage
     spec:
+      storageClassName: postgres-storage 
       accessModes: ["ReadWriteOnce"]
       resources:
         requests:
