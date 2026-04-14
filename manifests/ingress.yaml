@@ -1,0 +1,40 @@
+apiVersion: networking.k8s.io/v1 
+kind: Ingress 
+metadata: 
+  name: micro-dash-ingress
+  namespace: md 
+  annotations: 
+    nginx.ingress.kubernetes.io/proxy-body-size: "10m"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "60"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "60"
+    #limit connection
+    #nginx.ingress.kubernetes.io/limit-connections: "10"
+    #limit req per sec 
+    nginx.ingress.kubernetes.io/limit-rps: "2"
+    #limit req per min
+    nginx.ingress.kubernetes.io/limits-rpm: "100"
+    # return 429 instead of 503 when limited
+    nginx.ingress.kubernetes.io/limit-burst-multiplier: "5"
+
+spec: 
+  ingressClassName: nginx 
+  defaultBackend: 
+    service: 
+      name: def-svc 
+      port: 
+        number: 80 
+  tls: 
+  - hosts:
+    - micro-dash.local
+    secretName: micro-dash-tls
+  rules: 
+  - host: micro-dash.local 
+    http: 
+     paths: 
+     - path: /
+       pathType: Prefix 
+       backend: 
+        service: 
+          name: frontend-service
+          port: 
+            number: 80 
