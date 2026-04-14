@@ -13,6 +13,13 @@ spec:
     labels:
       app: user-service
    spec:
+    affinity:
+      podAntiAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+        - labelSelector:
+           matchLabels:
+             app: user-service 
+          topologyKey: kubernetes.io/hostname  
     initContainers:
      - name: wait-for-postgres
        image: busybox

@@ -4,6 +4,7 @@ metadata:
   name: postgres-ord
   namespace: md
 spec:
+
   serviceName: postgres-service-ord
   replicas: 1
   selector:

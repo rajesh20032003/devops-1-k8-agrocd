@@ -12,7 +12,14 @@ spec:
   metadata: 
    labels: 
     app: order-service 
-  spec: 
+  spec:
+   affinity:
+      podAntiAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+        - labelSelector:
+           matchLabels:
+             app: order-service 
+          topologyKey: kubernetes.io/hostname  
    initContainers:
      - name: wait-for-postgres
        image: busybox

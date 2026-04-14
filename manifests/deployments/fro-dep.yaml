@@ -13,6 +13,13 @@ spec:
       labels:
         app: frontend
     spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchLabels:
+                app: frontend
+            topologyKey: kubernetes.io/hostname 
       imagePullSecrets:
       - name: harbor-cred
       containers:
