@@ -1,0 +1,82 @@
+{{- /* it contains user and order service */ -}}
+{{- range $key, $svc := .Values.OrdUsrSer | default dict -}}
+---
+apiVersion: {{$.Values.deploymentversion}}
+kind: {{$svc.kind}}
+metadata:
+ name: {{$.Release.Name}}-{{ $svc.name}}
+ namespace: {{ $.Release.Namespace}}
+spec: 
+ replicas: {{ $svc.replicas }}
+ selector: 
+  matchLabels: 
+   app: {{ $svc.name}}
+ template: 
+  metadata: 
+   labels: 
+    app: {{ $svc.name}}
+  spec:
+   affinity:
+      podAntiAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+        - labelSelector:
+           matchLabels:
+             app: {{ $svc.name}}
+          topologyKey: {{$.Values.topologyKey}}  
+   initContainers:
+     - name: {{$svc.initconname }}
+       image: {{$svc.initconimage}}
+       command: ['sh','-c','until nc -z {{$svc.svcname}} 5432; do echo "waiting for postgres..."; sleep 2; done; echo "postgres is ready!"']
+   imagePullSecrets: 
+    - name: {{$.Values.harbor.SecretHarbor}}
+   containers: 
+   - name: {{ $svc.name}} 
+     image: {{$.Values.harbor.commonRepo}}/{{$svc.name}}:{{$svc.Tag}}
+     ports: 
+      - containerPort: {{$svc.port}}
+     env:
+     - name: PORT
+       value: {{$svc.port | quote }}
+     - name: DB_HOST
+       value: {{$svc.env.db_host | quote}}
+     - name: DB_PORT
+       value: {{$svc.env.db_port | quote}}
+     - name: DB_USER
+       valueFrom:
+          secretKeyRef:
+            name: {{$svc.env.secretkeyrefname | quote}}
+            key: {{$svc.env.secretkeyrefkeyname | quote}}
+     - name: DB_PASSWORD
+       valueFrom:
+          secretKeyRef:
+            name: {{$svc.env.secretkeyrefname | quote}}
+            key: {{$svc.env.secretkeyrefkeypass | quote}}
+     - name: DB_NAME
+       value: {{$svc.env.db_name | quote}}
+     startupProbe:
+          httpGet:
+            path: {{$svc.probes.startupProbe.httpGet.path}}
+            port: {{$svc.port}}
+          initialDelaySeconds: {{$svc.probes.startupProbe.initialDelaySeconds}}
+          periodSeconds: {{$svc.probes.startupProbe.periodSeconds}}
+          failureThreshold: {{$svc.probes.startupProbe.failureThreshold}}
+     livenessProbe: 
+          httpGet: 
+           path: {{$svc.probes.livenessProbe.httpGet.path}}
+           port: {{$svc.port}}
+          initialDelaySeconds: {{$svc.probes.livenessProbe.initialDelaySeconds}}
+          periodSeconds: {{$svc.probes.livenessProbe.periodSeconds}}
+          failureThreshold: {{$svc.probes.livenessProbe.failureThreshold}}
+     readinessProbe:
+         httpGet: 
+          path: {{$svc.probes.readinessProbe.httpGet.path}}
+          port: {{$svc.port}}
+         initialDelaySeconds: {{$svc.probes.readinessProbe.initialDelaySeconds}}
+         periodSeconds:  {{$svc.probes.readinessProbe.periodSeconds}}
+         failureThreshold:  {{$svc.probes.readinessProbe.failureThreshold}}
+   {{- with $svc.resources }}
+     resources:
+   {{- toYaml . | nindent 8 }}
+   {{- end }}
+{{ end }}
+

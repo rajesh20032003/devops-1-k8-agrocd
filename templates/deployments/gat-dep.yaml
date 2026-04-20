@@ -1,44 +1,52 @@
-apiVersion: apps/v1 
-kind: Deployment 
+apiVersion: {{ .Values.deploymentversion }}
+kind: {{.Values.gateway.kind}}
 metadata: 
- name: gateway
- namespace: md
+ name: {{.Release.Name}}-{{.Values.gateway.name}}
+ namespace: {{.Release.Namespace}}
 spec: 
- replicas: 1
+ replicas: {{.Values.gateway.replicas}}
  selector: 
   matchLabels: 
-   app: gateway 
+   app: {{.Values.gateway.name}}
  template:
   metadata:
    labels:
-    app: gateway
+    app: {{.Values.gateway.name}}
   spec: 
    affinity:
       podAntiAffinity:
         requiredDuringSchedulingIgnoredDuringExecution:
         - labelSelector:
            matchLabels:
-             app: gateway
-          topologyKey: kubernetes.io/hostname 
+             app: {{.Values.gateway.name}}
+          topologyKey: {{.Values.topologyKey}} 
    imagePullSecrets:
-     - name: harbor-cred 
+     - name: {{.Values.harbor.SecretHarbor}}
    containers: 
-    - name: gateway 
-      image: 34.133.110.141/micro-dash/gateway:ci-1
+    - name: {{.Values.gateway.name}}
+      image: {{.Values.harbor.commonRepo}}/{{.Values.gateway.imgname}}:{{.Values.gateway.Tag}}
       ports: 
-       - containerPort: 3000
+       - containerPort: {{.Values.gateway.port}}
       env:
         - name: PORT
-          value: "3000"
+          value: "{{.Values.gateway.port}}"
         - name: USER_SERVICE_URL
-          value: "http://user-service-svc.md.svc.cluster.local:3001"
+          value: "{{.Values.gateway.user_svc_url}}"
         - name: ORDER_SERVICE_URL
-          value: "http://order-service-svc.md.svc.cluster.local:3002"
+          value: "{{.Values.gateway.ord_svc_url}}"
+      {{ with .Values.gateway.resources -}}
       resources:
-          requests:
-            memory: "128Mi"
-            cpu: "100m"
-          limits:
-            memory: "256Mi"
-            cpu: "200m"
- 
+      {{- toYaml . | nindent 8 -}}
+      {{- end }}
+      livenessProbe:
+          httpGet:
+            path: {{ .Values.gateway.probes.liveness.path }}
+            port: {{.Values.gateway.port }}
+          initialDelaySeconds: {{.Values.gateway.probes.liveness.initialDelaySeconds}}
+          periodSeconds: {{.Values.gateway.probes.liveness.periodSeconds}}
+      readinessProbe:
+          httpGet:
+            path: {{ .Values.gateway.probes.readiness.path }}
+            port: {{.Values.gateway.port }}
+          initialDelaySeconds: {{.Values.gateway.probes.readiness.initialDelaySeconds}}
+          periodSeconds: {{.Values.gateway.probes.readiness.periodSeconds}}

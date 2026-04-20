@@ -1,0 +1,209 @@
+deploymentversion: apps/v1
+topologyKey: kubernetes.io/hostname 
+
+harbor:
+  SecretHarbor: harbor-cred
+  dockerconfigjson: "eyJhdXRocyI6eyIzNC4xMzMuMTEwLjE0MSI6eyJ1c2VybmFtZSI6ImFkbWluIiwicGFzc3dvcmQiOiJIYXJib3JAMTIzNDUiLCJhdXRoIjoiWVdSdGFXNDZTR0Z5WW05eVFERXlNelExIn19fQ=="
+  commonRepo: 34.133.110.141/micro-dash
+
+
+frontend:
+  kind: Deployment 
+  name: frontend 
+  replicas: 1
+  imgname: frontend
+  Tag: ci-7
+  port: 80
+  configMap: nginx-config
+  resources:
+    requests:
+      memory: "64Mi"
+      cpu: "50m"
+    limits:
+      memory: "128Mi"
+      cpu: "100m"
+  probes:
+    liveness:
+      path: /
+      initialDelaySeconds: 10
+      periodSeconds: 10
+    readiness:
+      path: /
+      initialDelaySeconds: 5
+      periodSeconds: 5
+
+
+gateway:
+  kind: Deployment 
+  name: gateway 
+  replicas: 1
+  imgname: gateway 
+  Tag: ci-7
+  port: 3000
+  user_svc_url: http://user-service-svc.md.svc.cluster.local:3001
+  ord_svc_url: http://order-service-svc.md.svc.cluster.local:3002
+  resources:
+    requests:
+      memory: "128Mi"
+      cpu: "100m"
+    limits:
+      memory: "256Mi"
+      cpu: "200m"
+  probes:
+    liveness:
+      path: /health
+      port: 3000
+      initialDelaySeconds: 10
+      periodSeconds: 10
+    readiness:
+      path: /health
+      port: 3000
+      initialDelaySeconds: 5
+      periodSeconds: 5
+
+OrdUsrSer:
+  UsrSer: 
+    kind: Deployment 
+    name: user-service 
+    replicas: 1
+    imgname: user-service 
+    Tag: ci-7
+    port: 3001
+    svcname: postgres-service
+    env:
+      db_host: "postgres-service.md.svc.cluster.local"
+      db_port: "5432"
+      secretkeyrefname: "db-secret"
+      secretkeyrefkeyname: "POSTGRES_USER"
+      secretkeyrefkeypass: "POSTGRES_PASSWORD"
+      db_name: "usersdb" 
+    initconname: wait-for-postgres
+    initconimage: busybox
+    probes:
+      startupProbe:
+        httpGet:
+          path: /health
+          port: 3001
+        initialDelaySeconds: 10 
+        periodSeconds: 5
+        failureThreshold: 3
+      livenessProbe: 
+        httpGet: 
+          path: /health
+          port: 3001
+        initialDelaySeconds: 10
+        periodSeconds: 5
+        failureThreshold: 3
+      readinessProbe:
+        httpGet: 
+          path: /health 
+          port: 3001 
+        initialDelaySeconds: 10
+        periodSeconds: 5
+        failureThreshold: 3
+    resources:
+      requests:
+        memory: "128Mi"
+        cpu: "100m"
+      limits:
+        memory: "256Mi"
+        cpu: "200m"
+  OrdSer:
+    kind: Deployment 
+    name: order-service 
+    replicas: 1
+    imgname: order-service 
+    Tag: ci-7
+    port: 3002
+    svcname: postgres-service-ord
+    env:
+      db_host: "postgres-service-ord"
+      db_port: "5432"
+      secretkeyrefname: "db-secret"
+      secretkeyrefkeyname: "POSTGRES_USER"
+      secretkeyrefkeypass: "POSTGRES_PASSWORD"
+      db_name: "ordersdb"
+    initconname: wait-for-postgres
+    initconimage: busybox
+    probes:
+      startupProbe:
+        httpGet:
+          path: /health
+          port: 3002
+        initialDelaySeconds: 10 
+        periodSeconds: 5
+        failureThreshold: 3
+      livenessProbe: 
+        httpGet: 
+          path: /health
+          port: 3002
+        initialDelaySeconds: 10
+        periodSeconds: 5
+        failureThreshold: 3
+      readinessProbe:
+        httpGet: 
+          path: /health 
+          port: 3002
+        initialDelaySeconds: 10
+        periodSeconds: 5
+        failureThreshold: 3
+    resources:
+      requests:
+        memory: "128Mi"
+        cpu: "100m"
+      limits:
+        memory: "256Mi"
+        cpu: "200m"
+
+
+#services
+
+services: 
+  fro-svc:
+    apiVersion: v1 
+    kind: Service 
+    name: frontend-service
+    app: frontend 
+    type: ClusterIP
+    port: 80
+    targetport: 80
+  gat-svc:
+    apiVersion: v1 
+    kind: Service 
+    name: gateway-service 
+    app: gateway
+    type: ClusterIP
+    port: 3000
+    targetport: 3000
+  ord-svc:
+    apiVersion: v1 
+    kind: Service 
+    name: order-service-svc 
+    app: order-service
+    type: ClusterIP
+    port: 3002
+    targetport: 3002
+  usr-svc:
+    apiVersion: v1 
+    kind: Service 
+    name: user-service-svc
+    app: user-service
+    type: ClusterIP
+    port: 3001
+    targetport: 3001
+  pg-usr-svc:
+    apiVersion: v1 
+    kind: Service 
+    name: postgres-service
+    app: postgres-user 
+    type: ClusterIP
+    port: 5432
+    targetport: 5432
+  pg-ord-svc:
+    apiVersion: v1 
+    kind: Service 
+    name: postgres-service-ord
+    app: postgres-ord 
+    type: ClusterIP
+    port: 5432
+    targetport: 5432
