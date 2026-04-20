@@ -1,0 +1,12 @@
+.gitignore
+tls.crt
+tls.key
+LICENSEtemplates/rbac/users/
+*.crt
+*.csr
+*.key
+*.tar.gz
+templates/db-cred.yaml
+templates/rbac/users/*.crt
+templates/rbac/users/*.csr
+templates/rbac/users/*.key
