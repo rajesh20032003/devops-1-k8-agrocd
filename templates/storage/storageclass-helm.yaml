@@ -1,0 +1,10 @@
+apiVersion: {{.Values.storagclass.apiVersion}}
+kind: {{.Values.storagclass.kind}}
+metadata: 
+  name: {{.Values.storagclass.name}} 
+  annotations: 
+    storageclass.kubernetes.io/is-default-class: "false"
+provisioner: {{.Values.storagclass.provisioner}}
+reclaimPolicy: {{.Values.storagclass.reclaimPolicy}}
+volumeBindingMode: {{.Values.storagclass.volumeBindingMode}} 
+allowVolumeExpansion: {{.Values.storagclass.allowVolumeExpansion}}

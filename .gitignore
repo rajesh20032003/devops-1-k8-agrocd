@@ -7,9 +7,4 @@ harbor-secrets.yaml
 db-cred.yaml
  kubeseal-0.24.0-linux-amd64.tar.gz
  LICENSE 
-scaling hpa+vpa 
-nw policy
 
-done
-deployment 
-services 

@@ -2,6 +2,14 @@
 
 Helm chart for the micro-dash microservices application.
 
+##############
+scaling hpa+vpa 
+nw policy
+
+done
+deployment 
+services 
+###############
 ## Quick Start
 
 \`\`\`bash

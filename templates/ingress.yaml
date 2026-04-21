@@ -1,40 +1,40 @@
-apiVersion: networking.k8s.io/v1 
-kind: Ingress 
+apiVersion: {{.Values.ingressapp.apiVersion}}
+kind: {{.Values.ingressapp.kind}} 
 metadata: 
-  name: micro-dash-ingress
-  namespace: md 
+  name: {{.Release.Name}}-{{.Values.ingressapp.name}}
+  namespace: {{.Release.Namespace}}
   annotations: 
-    nginx.ingress.kubernetes.io/proxy-body-size: "10m"
-    nginx.ingress.kubernetes.io/proxy-read-timeout: "60"
-    nginx.ingress.kubernetes.io/proxy-send-timeout: "60"
+    nginx.ingress.kubernetes.io/proxy-body-size: {{.Values.ingressapp.bodysize | quote}}
+    nginx.ingress.kubernetes.io/proxy-read-timeout: {{.Values.ingressapp.readtimeout | quote }}
+    nginx.ingress.kubernetes.io/proxy-send-timeout: {{.Values.ingressapp.sendtimeout | quote }}
     #limit connection
-    #nginx.ingress.kubernetes.io/limit-connections: "10"
+    #nginx.ingress.kubernetes.io/limit-connections: {{.Values.ingressapp.limitconnections | quote }}
     #limit req per sec 
-    nginx.ingress.kubernetes.io/limit-rps: "2"
+    nginx.ingress.kubernetes.io/limit-rps: {{.Values.ingressapp.limitrps | quote}}
     #limit req per min
-    nginx.ingress.kubernetes.io/limits-rpm: "100"
+    nginx.ingress.kubernetes.io/limits-rpm: {{.Values.ingressapp.limitrpm | quote }}
     # return 429 instead of 503 when limited
-    nginx.ingress.kubernetes.io/limit-burst-multiplier: "5"
+    nginx.ingress.kubernetes.io/limit-burst-multiplier: {{.Values.ingressapp.limitbrustmultiplier | quote}}
 
 spec: 
-  ingressClassName: nginx 
+  ingressClassName: {{.Values.ingressapp.ingressclassname}}
   defaultBackend: 
     service: 
-      name: def-svc 
+      name: {{.Values.ingressapp.defbackendname}} 
       port: 
-        number: 80 
+        number: {{.Values.ingressapp.defbackendport}}
   tls: 
   - hosts:
-    - micro-dash.local
-    secretName: micro-dash-tls
-  rules: 
-  - host: micro-dash.local 
-    http: 
-     paths: 
-     - path: /
-       pathType: Prefix 
-       backend: 
-        service: 
-          name: frontend-service
-          port: 
-            number: 80 
+    -  {{.Values.ingressapp.hostname}}
+    secretName: {{.Values.ingressapp.secretname}}
+  rules:
+  - host: {{.Values.ingressapp.hostname}}
+    http:
+      paths:
+        - path: {{.Values.ingressapp.path}}
+          pathType: {{.Values.ingressapp.pathtype}}
+          backend:
+            service:
+              name: {{.Values.ingressapp.backendservicename}}
+              port:
+                number: {{.Values.ingressapp.port}}

@@ -1,0 +1,16 @@
+{{/*it contains services of user-service,order-service,frontend,gateway,pg-user-db,pg-ord-db*/}}
+{{ range $key, $svc := .Values.services | default dict }}
+---
+apiVersion: {{$svc.apiVersion}}
+kind: {{$svc.kind}}
+metadata: 
+ name: {{$svc.name}}
+ namespace: {{$.Release.Namespace}}
+spec: 
+ type: {{$svc.type}}
+ selector:
+  app: {{$svc.app}}
+ ports: 
+  - port: {{$svc.port}}
+    targetPort: {{$svc.targetport}}
+{{- end -}}

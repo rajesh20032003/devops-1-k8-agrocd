@@ -1,0 +1,41 @@
+{{- range $key, $hpa := .Values.hpa | default dict }}
+---
+apiVersion: {{$hpa.apiVersion}}
+kind: {{$hpa.kind}}
+metadata: 
+  name: {{$.Release.Name}}-{{$hpa.name}}
+  namespace: {{$.Release.Namespace}}
+spec: 
+  scaleTargetRef: 
+    apiVersion: {{$.Values.deploymentversion}}
+    kind: {{$.Values.frontend.kind}}
+    name: {{ $.Release.Name }}-{{ $hpa.appname }}
+  minReplicas: {{$hpa.minreplicas}}
+  maxReplicas: {{$hpa.maxreplicas}}
+  metrics: 
+  - type: Resource 
+    resource: 
+      name: cpu 
+      target: 
+        type: Utilization 
+        averageUtilization: {{$hpa.cpuaverageutilization}} 
+  - type: Resource 
+    resource: 
+      name: memory 
+      target:
+        type: Utilization 
+        averageUtilization: {{$hpa.memoryaverageutilization}}
+  behavior:
+    scaleUp:
+      stabilizationWindowSeconds: {{$hpa.scaleupstabsec}}
+      policies: 
+      - type: Pods 
+        value: {{$hpa.scaleuppodvalue}}
+        periodSeconds: {{$hpa.scaleupperiodsec}}
+    scaleDown:
+      stabilizationWindowSeconds: {{$hpa.scaledownstabsec}}
+      policies:
+      - type: Pods 
+        value: {{$hpa.scaledownpodvalue}}
+        periodSeconds: {{$hpa.scaledownperiodsec}}
+{{- end }}

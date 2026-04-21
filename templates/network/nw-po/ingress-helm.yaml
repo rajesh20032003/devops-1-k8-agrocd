@@ -1,0 +1,21 @@
+{{- range $key, $ingress := .Values.ingress | default dict -}}
+---
+apiVersion: {{$ingress.apiVersion}}
+kind: {{$ingress.kind}}
+metadata: 
+  name: {{$ingress.name}} 
+  namespace: {{$.Release.Namespace}}
+spec:
+  podSelector: 
+    matchLabels: 
+      app: {{$ingress.app}}
+  policyTypes:
+  - {{$ingress.policytype}}
+  ingress:
+  - from:
+    - podSelector: 
+       matchLabels:
+         app: {{$ingress.targetapp}}
+    ports:
+    - port: {{$ingress.port}}
+{{ end }}

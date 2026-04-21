@@ -10,3 +10,8 @@ templates/db-cred.yaml
 templates/rbac/users/*.crt
 templates/rbac/users/*.csr
 templates/rbac/users/*.key
+templates/rbac/users/*.crt
+templates/rbac/users/*.csr
+templates/rbac/users/*.key
+tls.crt
+tls.key

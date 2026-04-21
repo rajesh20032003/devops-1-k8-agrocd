@@ -1,0 +1,27 @@
+{{- range $key, $vpa := .Values.vpa | default dict -}}
+---
+apiVersion: {{$vpa.apiVersion}}
+kind: {{$vpa.kind}}
+metadata:
+  name: {{$.Release.Name}}-{{$vpa.name}}
+  namespace: {{$.Release.Namespace}}
+spec:
+  targetRef:
+    apiVersion: {{$vpa.refapiversion}}
+    kind: {{$vpa.refkind}}
+    name: {{$.Release.Name}}-{{$vpa.reftargetname}}
+  updatePolicy:
+    updateMode: "Off"       # just recommend, don't touch
+  resourcePolicy:
+    containerPolicies:
+    - containerName: {{$vpa.containername}}
+      minAllowed:
+        cpu: {{$vpa.mincpu}}
+        memory: {{$vpa.minmem}}
+      maxAllowed:
+        cpu: {{$vpa.mincpu}}
+        memory: {{$vpa.maxmem}}
+      controlledResources:
+      - cpu
+      - memory
+{{ end }}

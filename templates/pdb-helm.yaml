@@ -1,0 +1,14 @@
+{{- range $key, $pdb := .Values.pdb | default dict -}}
+---
+apiVersion: {{$pdb.apiVersion}}
+kind: {{$pdb.kind}} 
+metadata: 
+  name: {{$pdb.name}} 
+  namespace: {{$.Release.Namespace}}
+spec: 
+  minAvailable: {{$pdb.minavailable}} #always keep 1 pod atleast 1 pod running 
+  #maxUnavailable: 1 allow max 1 pod down at a time 
+  selector: 
+    matchLabels:
+      app: {{$pdb.app}} 
+{{ end }}

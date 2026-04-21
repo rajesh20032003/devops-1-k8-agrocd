@@ -1,0 +1,50 @@
+{{- range $key, $st := .Values.st | default dict }}
+---
+apiVersion: {{$st.apiVersion}}
+kind: {{$st.kind}}
+metadata:
+  name: {{$.Release.Name}}-{{$st.name}}
+  namespace: {{$.Release.Namespace}}
+spec:
+  serviceName: {{$st.servicename}}
+  replicas: {{$st.replicas}}
+  selector:
+    matchLabels:
+      app: {{$st.app}}
+  template:
+    metadata:
+      labels:
+        app: {{$st.app}}
+    spec:
+      containers:
+      - name: {{$st.containername}}
+        image: {{$st.containerimage}}
+        ports:
+        - containerPort: {{$st.containerport}}
+        env:
+        - name: {{$st.env.username}}
+          valueFrom:
+            secretKeyRef:
+              name: {{$st.env.secretkeyrefname}}
+              key: {{$st.env.secretkeyrefkey}}
+        - name: {{$st.env.passname}}
+          valueFrom:
+            secretKeyRef:
+              name: {{$st.env.secretkeyrefname}}
+              key: {{$st.env.secretkeyrefkeypass}}
+        - name: {{$st.env.db_name}}
+          value: {{$st.env.db_value}}
+        volumeMounts:
+        - name: {{$st.volname}}
+          mountPath: {{$st.volmountpath}}
+
+  volumeClaimTemplates:
+  - metadata:
+      name: {{$st.volname}}
+    spec:
+      storageClassName: {{$st.storageclassname}}
+      accessModes: ["ReadWriteOnce"]
+      resources:
+        requests:
+          storage: {{$st.storage }}
+{{ end }}
