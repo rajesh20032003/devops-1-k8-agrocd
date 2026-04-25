@@ -2,7 +2,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata: 
   name: alice-role 
-  namespace: md 
+  namespace: {{.Release.Namespace}}
 roleRef: 
   kind: Role 
   name: alice-role 

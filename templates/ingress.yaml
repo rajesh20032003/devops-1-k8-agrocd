@@ -8,12 +8,12 @@ metadata:
     nginx.ingress.kubernetes.io/proxy-read-timeout: {{.Values.ingressapp.readtimeout | quote }}
     nginx.ingress.kubernetes.io/proxy-send-timeout: {{.Values.ingressapp.sendtimeout | quote }}
     #limit connection
-    #nginx.ingress.kubernetes.io/limit-connections: {{.Values.ingressapp.limitconnections | quote }}
+    nginx.ingress.kubernetes.io/limit-connections: {{.Values.ingressapp.limitconnections | quote }}
     #limit req per sec 
     nginx.ingress.kubernetes.io/limit-rps: {{.Values.ingressapp.limitrps | quote}}
     #limit req per min
     nginx.ingress.kubernetes.io/limits-rpm: {{.Values.ingressapp.limitrpm | quote }}
-    # return 429 instead of 503 when limited
+    #return 429 instead of 503 when limited
     nginx.ingress.kubernetes.io/limit-burst-multiplier: {{.Values.ingressapp.limitbrustmultiplier | quote}}
 
 spec: 

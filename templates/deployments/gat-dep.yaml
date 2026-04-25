@@ -13,13 +13,13 @@ spec:
    labels:
     app: {{.Values.gateway.name}}
   spec: 
-   affinity:
-      podAntiAffinity:
-        requiredDuringSchedulingIgnoredDuringExecution:
-        - labelSelector:
-           matchLabels:
-             app: {{.Values.gateway.name}}
-          topologyKey: {{.Values.topologyKey}} 
+  #  affinity:
+  #     podAntiAffinity:
+  #       requiredDuringSchedulingIgnoredDuringExecution:
+  #       - labelSelector:
+  #          matchLabels:
+  #            app: {{.Values.gateway.name}}
+  #         topologyKey: {{.Values.topologyKey}} 
    imagePullSecrets:
      - name: {{.Values.harbor.SecretHarbor}}
    containers: 

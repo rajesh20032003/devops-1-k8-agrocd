@@ -16,13 +16,13 @@ spec:
    labels: 
     app: {{ $svc.name}}
   spec:
-   affinity:
-      podAntiAffinity:
-        requiredDuringSchedulingIgnoredDuringExecution:
-        - labelSelector:
-           matchLabels:
-             app: {{ $svc.name}}
-          topologyKey: {{$.Values.topologyKey}}  
+  #  affinity:
+  #     podAntiAffinity:
+  #       requiredDuringSchedulingIgnoredDuringExecution:
+  #       - labelSelector:
+  #          matchLabels:
+  #            app: {{ $svc.name}}
+  #         topologyKey: {{$.Values.topologyKey}}  
    initContainers:
      - name: {{$svc.initconname }}
        image: {{$svc.initconimage}}

@@ -31,8 +31,8 @@ frontend:
       periodSeconds: 10
     readiness:
       path: /
-      initialDelaySeconds: 5
-      periodSeconds: 5
+      initialDelaySeconds: 10
+      periodSeconds: 10
 
 #values for gateway
 gateway:
@@ -42,8 +42,8 @@ gateway:
   imgname: gateway 
   Tag: ci-7
   port: 3000
-  user_svc_url: http://user-service-svc.md.svc.cluster.local:3001
-  ord_svc_url: http://order-service-svc.md.svc.cluster.local:3002
+  user_svc_url: http://user-service-svc:3001
+  ord_svc_url: http://order-service-svc:3002
   resources:
     requests:
       memory: "128Mi"
@@ -74,7 +74,7 @@ OrdUsrSer:
     port: 3001
     svcname: postgres-service
     env:
-      db_host: "postgres-service.md.svc.cluster.local"
+      db_host: "postgres-service"
       db_port: "5432"
       secretkeyrefname: "db-secret"
       secretkeyrefkeyname: "POSTGRES_USER"
@@ -413,7 +413,7 @@ ingress:
     name: frontend-to-gateway-ingress
     app: gateway
     targetapp: frontend
-    port: 3000 
+    port: 3000
     policytype: Ingress
   gateway-to-user-service:
     apiVersion: networking.k8s.io/v1
