@@ -40,7 +40,7 @@ gateway:
   name: gateway 
   replicas: 1
   imgname: gateway 
-  Tag: ci-7
+  Tag: ci-8
   port: 3000
   user_svc_url: http://user-service-svc:3001
   ord_svc_url: http://order-service-svc:3002
@@ -55,13 +55,13 @@ gateway:
     liveness:
       path: /health
       port: 3000
-      initialDelaySeconds: 10
+      initialDelaySeconds: 20
       periodSeconds: 10
     readiness:
       path: /health
       port: 3000
-      initialDelaySeconds: 5
-      periodSeconds: 5
+      initialDelaySeconds: 20
+      periodSeconds: 10
 
 #values for order-service and user-service
 OrdUsrSer:
@@ -170,6 +170,8 @@ services:
     type: ClusterIP
     port: 80
     targetport: 80
+    portname: http 
+    monitoring: false
   gateway-service:
     apiVersion: v1 
     kind: Service 
@@ -178,6 +180,8 @@ services:
     type: ClusterIP
     port: 3000
     targetport: 3000
+    portname: http 
+    monitoring: true
   order-service:
     apiVersion: v1 
     kind: Service 
@@ -186,6 +190,8 @@ services:
     type: ClusterIP
     port: 3002
     targetport: 3002
+    portname: http 
+    monitoring: false
   user-service:
     apiVersion: v1 
     kind: Service 
@@ -194,6 +200,8 @@ services:
     type: ClusterIP
     port: 3001
     targetport: 3001
+    port-name: http 
+    monitoring: false
   pg-user-service:
     apiVersion: v1 
     kind: Service 
@@ -202,6 +210,8 @@ services:
     type: ClusterIP
     port: 5432
     targetport: 5432
+    portname: http 
+    monitoring: false
   pg-order-service:
     apiVersion: v1 
     kind: Service 
@@ -210,6 +220,8 @@ services:
     type: ClusterIP
     port: 5432
     targetport: 5432
+    portname: http 
+    monitoring: false
 
 
 #scaling hpa for 4 services 
@@ -221,7 +233,7 @@ hpa:
     name: frontend-hpa
     appname: frontend
     minreplicas: 1
-    maxreplicas: 5
+    maxreplicas: 3
     cpuaverageutilization: 40
     memoryaverageutilization: 70
     scaleupstabsec: 30
@@ -484,10 +496,10 @@ ingressapp:
   bodysize: 10m 
   readtimeout: 60 
   sendtimeout: 60 
-  limitconnections: 10
-  limitrps: 2
+  limitconnections: 100
+  limitrps: 200
   limitrpm: 100
-  limitbrustmultiplier: 5 
+  limitbrustmultiplier: 50
   ingressclassname: nginx 
   defbackendname: def-svc
   defbackendport: 80 

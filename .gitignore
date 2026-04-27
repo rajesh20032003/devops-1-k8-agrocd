@@ -1,10 +1,5 @@
-harbor-secrets.yaml
-db-cred.yaml
 *.pem
 *.key
 *.env
-harbor-secrets.yaml
-db-cred.yaml
  kubeseal-0.24.0-linux-amd64.tar.gz
  LICENSE 
-

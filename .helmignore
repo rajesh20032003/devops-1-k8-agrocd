@@ -2,16 +2,9 @@
 tls.crt
 tls.key
 LICENSE
-templates/rbac/users/
 *.crt
 *.csr
 *.key
 *.tar.gz
-templates/rbac/users/*.crt
-templates/rbac/users/*.csr
-templates/rbac/users/*.key
-templates/rbac/users/*.crt
-templates/rbac/users/*.csr
-templates/rbac/users/*.key
 tls.crt
 tls.key

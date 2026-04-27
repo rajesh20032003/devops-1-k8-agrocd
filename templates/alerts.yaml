@@ -16,7 +16,7 @@ spec:
       expr: |
         rate(kube_pod_container_status_restarts_total{
           namespace="{{.Release.Namespace}}",
-          pod=~"a0-.*"
+          pod=~"-.*"
         }[15m]) * 60 * 15 > 3
       for: 1m
       labels:
@@ -24,3 +24,22 @@ spec:
       annotations:
         summary: "Pod {{"{{ $labels.pod }}"}} is crash looping"
         description: "Pod {{ "{{ $labels.pod }}" }} restarted more than 3 times in 15 minutes"
+    - alert: PodNotRunning
+      expr: |
+        kube_pod_status_phase{
+          namespace="{{.Release.Namespace}}",
+          pod=~".*",
+          phase!="Running"
+        } == 1
+      for: 2m
+      labels:
+        severity: warning
+      annotations:
+        summary: "Pod {{"{{ $labels.pod }}"}} is not running"
+        description: "Pod {{"{{ $labels.pod }}"}} is in {{"{{ $labels.phase }}"}}phase"
+    - alert: HPAAtMaxReplicas
+      expr: |
+        kube_horizontalpodautoscaler_status_current_replicas{namespace="{{.Release.Namespace}}"}
+        == on(namespace, horizontalpodautoscaler) 
+        kube_horizontalpodautoscaler_spec_max_replicas{namespace="{{.Release.Namespace}}"}
+      for: 1m

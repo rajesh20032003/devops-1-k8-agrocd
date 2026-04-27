@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Secret
+metadata:
+ name: db-secret
+ namespace: {{.Release.Namespace}}
+type: Opaque
+stringData:
+  POSTGRES_USER: appuser
+  POSTGRES_PASSWORD: apppassword123
+  POSTGRES_DB_USERS: usersdb
+  POSTGRES_DB_ORDERS: ordersdb
+   

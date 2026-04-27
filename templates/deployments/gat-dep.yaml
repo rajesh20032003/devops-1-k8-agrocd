@@ -8,10 +8,12 @@ spec:
  selector: 
   matchLabels: 
    app: {{.Values.gateway.name}}
+   monitored: "true"
  template:
   metadata:
    labels:
     app: {{.Values.gateway.name}}
+    monitored: "true"
   spec: 
   #  affinity:
   #     podAntiAffinity:
