@@ -1,0 +1,25 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: micro-dash-app
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+spec:
+  project: default
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: md # Deploying to your isolated app namespace
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+  source:
+    repoURL: 'https://github.com/rajesh20032003/devops-1-k8-agrocd.git'
+    targetRevision: HEAD
+    path: .
+    helm:
+      valueFiles: 
+        - values.yaml 

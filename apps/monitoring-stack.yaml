@@ -1,0 +1,28 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata: 
+  name: prometheus-stack 
+  namespace: argocd 
+  annotations:
+    argocd.argoproj.io/sync-wave: "0" 
+spec:
+  project: default 
+  destination: 
+    server: https://kubernetes.default.svc
+    namespace: monitoring 
+  syncPolicy: 
+    automated: 
+      prune: true 
+      selfHeal: true 
+  syncOptions: 
+    - createNamespace=true 
+  sources: 
+    - repoURL: 'https://prometheus-community.github.io/helm-charts'
+      chart: kube-prometheus-stack
+      targetRevision: 0.90.1
+      helm:
+        valueFiles:
+          - $values/values-monitoring.yaml
+    - repoURL: 'https://github.com/rajesh20032003/devops-1-k8-agrocd.git'
+      targetRevision: HEAD
+      ref: values 

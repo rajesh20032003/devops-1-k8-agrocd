@@ -5,6 +5,7 @@ Helm chart for the micro-dash microservices application.
 ##############
 scaling hpa+vpa 
 nw policy
+zUlIB4T3ZiFSsenE
 
 done
 deployment 
