@@ -3,6 +3,12 @@ grafana:
   sidecar:
     datasources:
       defaultDatasourceEnabled: false
+  additionalDataSources:
+    - name: Prometheus
+      type: prometheus
+      url: http://prometheus-kube-prometheus-prometheus:9090
+      access: proxy
+      isDefault: true
 alertmanager:
   config:
     global:
