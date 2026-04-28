@@ -12,7 +12,7 @@ frontend:
   name: frontend
   replicas: 1
   imgname: frontend
-  Tag: ac9ac40
+  Tag: d1fe232
   port: 80
   configMap: nginx-config
   resources:
