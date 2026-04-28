@@ -487,3 +487,5 @@ ingressapp:
   pathtype: Prefix
   backendservicename: frontend-service
   port: 80
+user-service:
+  Tag: 633b5f1
