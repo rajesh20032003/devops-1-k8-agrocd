@@ -1,20 +1,18 @@
 #common values 
 deploymentversion: apps/v1
-topologyKey: kubernetes.io/hostname 
-
+topologyKey: kubernetes.io/hostname
 #values for harbor registry
 harbor:
   SecretHarbor: harbor-cred
   dockerconfigjson: "eyJhdXRocyI6eyIzNC4xMzMuMTEwLjE0MSI6eyJ1c2VybmFtZSI6ImFkbWluIiwicGFzc3dvcmQiOiJIYXJib3JAMTIzNDUiLCJhdXRoIjoiWVdSdGFXNDZTR0Z5WW05eVFERXlNelExIn19fQ=="
   commonRepo: 34.133.110.141/micro-dash
-
 #values for frontend
 frontend:
-  kind: Deployment 
-  name: frontend 
+  kind: Deployment
+  name: frontend
   replicas: 1
   imgname: frontend
-  Tag: ci-7
+  Tag: d94f112
   port: 80
   configMap: nginx-config
   resources:
@@ -33,13 +31,12 @@ frontend:
       path: /
       initialDelaySeconds: 10
       periodSeconds: 10
-
 #values for gateway
 gateway:
-  kind: Deployment 
-  name: gateway 
+  kind: Deployment
+  name: gateway
   replicas: 1
-  imgname: gateway 
+  imgname: gateway
   Tag: ci-8
   port: 3000
   user_svc_url: http://user-service-svc:3001
@@ -62,14 +59,13 @@ gateway:
       port: 3000
       initialDelaySeconds: 20
       periodSeconds: 10
-
 #values for order-service and user-service
 OrdUsrSer:
-  UsrSer: 
-    kind: Deployment 
-    name: user-service 
+  UsrSer:
+    kind: Deployment
+    name: user-service
     replicas: 1
-    imgname: user-service 
+    imgname: user-service
     Tag: ci-7
     port: 3001
     svcname: postgres-service
@@ -79,7 +75,7 @@ OrdUsrSer:
       secretkeyrefname: "db-secret"
       secretkeyrefkeyname: "POSTGRES_USER"
       secretkeyrefkeypass: "POSTGRES_PASSWORD"
-      db_name: "usersdb" 
+      db_name: "usersdb"
     initconname: wait-for-postgres
     initconimage: busybox
     probes:
@@ -87,20 +83,20 @@ OrdUsrSer:
         httpGet:
           path: /health
           port: 3001
-        initialDelaySeconds: 10 
+        initialDelaySeconds: 10
         periodSeconds: 5
         failureThreshold: 3
-      livenessProbe: 
-        httpGet: 
+      livenessProbe:
+        httpGet:
           path: /health
           port: 3001
         initialDelaySeconds: 10
         periodSeconds: 5
         failureThreshold: 3
       readinessProbe:
-        httpGet: 
-          path: /health 
-          port: 3001 
+        httpGet:
+          path: /health
+          port: 3001
         initialDelaySeconds: 10
         periodSeconds: 5
         failureThreshold: 3
@@ -112,10 +108,10 @@ OrdUsrSer:
         memory: "256Mi"
         cpu: "200m"
   OrdSer:
-    kind: Deployment 
-    name: order-service 
+    kind: Deployment
+    name: order-service
     replicas: 1
-    imgname: order-service 
+    imgname: order-service
     Tag: ci-7
     port: 3002
     svcname: postgres-service-ord
@@ -133,19 +129,19 @@ OrdUsrSer:
         httpGet:
           path: /health
           port: 3002
-        initialDelaySeconds: 10 
+        initialDelaySeconds: 10
         periodSeconds: 5
         failureThreshold: 3
-      livenessProbe: 
-        httpGet: 
+      livenessProbe:
+        httpGet:
           path: /health
           port: 3002
         initialDelaySeconds: 10
         periodSeconds: 5
         failureThreshold: 3
       readinessProbe:
-        httpGet: 
-          path: /health 
+        httpGet:
+          path: /health
           port: 3002
         initialDelaySeconds: 10
         periodSeconds: 5
@@ -157,79 +153,73 @@ OrdUsrSer:
       limits:
         memory: "256Mi"
         cpu: "200m"
-
-
 #values for all services used in this application
-
-services: 
+services:
   frontend-service:
-    apiVersion: v1 
-    kind: Service 
+    apiVersion: v1
+    kind: Service
     name: frontend-service
-    app: frontend 
+    app: frontend
     type: ClusterIP
     port: 80
     targetport: 80
-    portname: http 
+    portname: http
     monitoring: false
   gateway-service:
-    apiVersion: v1 
-    kind: Service 
-    name: gateway-service 
+    apiVersion: v1
+    kind: Service
+    name: gateway-service
     app: gateway
     type: ClusterIP
     port: 3000
     targetport: 3000
-    portname: http 
+    portname: http
     monitoring: true
   order-service:
-    apiVersion: v1 
-    kind: Service 
-    name: order-service-svc 
+    apiVersion: v1
+    kind: Service
+    name: order-service-svc
     app: order-service
     type: ClusterIP
     port: 3002
     targetport: 3002
-    portname: http 
+    portname: http
     monitoring: false
   user-service:
-    apiVersion: v1 
-    kind: Service 
+    apiVersion: v1
+    kind: Service
     name: user-service-svc
     app: user-service
     type: ClusterIP
     port: 3001
     targetport: 3001
-    port-name: http 
+    port-name: http
     monitoring: false
   pg-user-service:
-    apiVersion: v1 
-    kind: Service 
+    apiVersion: v1
+    kind: Service
     name: postgres-service
-    app: postgres-user 
+    app: postgres-user
     type: ClusterIP
     port: 5432
     targetport: 5432
-    portname: http 
+    portname: http
     monitoring: false
   pg-order-service:
-    apiVersion: v1 
-    kind: Service 
+    apiVersion: v1
+    kind: Service
     name: postgres-service-ord
-    app: postgres-ord 
+    app: postgres-ord
     type: ClusterIP
     port: 5432
     targetport: 5432
-    portname: http 
+    portname: http
     monitoring: false
-
-
 #scaling hpa for 4 services 
-
-hpa: 
+hpa:
   frontend-hpa:
     apiVersion: autoscaling/v2
-    kind: HorizontalPodAutoscaler 
+    kind: HorizontalPodAutoscaler
     name: frontend-hpa
     appname: frontend
     minreplicas: 1
@@ -241,10 +231,10 @@ hpa:
     scaleupperiodsec: 30
     scaledownstabsec: 120
     scaledownpodvalue: 1
-    scaledownperiodsec: 60   
+    scaledownperiodsec: 60
   gateway-hpa:
     apiVersion: autoscaling/v2
-    kind: HorizontalPodAutoscaler 
+    kind: HorizontalPodAutoscaler
     name: gateway-hpa
     appname: gateway
     minreplicas: 1
@@ -259,7 +249,7 @@ hpa:
     scaledownperiodsec: 60
   user-service-hpa:
     apiVersion: autoscaling/v2
-    kind: HorizontalPodAutoscaler 
+    kind: HorizontalPodAutoscaler
     name: user-service-hpa
     appname: user-service
     minreplicas: 1
@@ -272,9 +262,9 @@ hpa:
     scaledownstabsec: 120
     scaledownpodvalue: 1
     scaledownperiodsec: 60
-  order-service-hpa: 
+  order-service-hpa:
     apiVersion: autoscaling/v2
-    kind: HorizontalPodAutoscaler 
+    kind: HorizontalPodAutoscaler
     name: order-service-hpa
     appname: order-service
     minreplicas: 1
@@ -287,7 +277,6 @@ hpa:
     scaledownstabsec: 120
     scaledownpodvalue: 1
     scaledownperiodsec: 60
-
 vpa:
   user-db-vpa:
     apiVersion: autoscaling.k8s.io/v1
@@ -315,33 +304,31 @@ vpa:
     minmem: 128Mi
     maxcpu: 1000m
     maxmem: 1Gi
-
-
-st: 
-  user-db: 
+st:
+  user-db:
     apiVersion: apps/v1
     kind: StatefulSet
-    name: postgres-user 
-    servicename: postgres-service 
+    name: postgres-user
+    servicename: postgres-service
     replicas: 1
-    app: postgres-user 
+    app: postgres-user
     containername: postgres
     containerimage: postgres:15-alpine
     containerport: 5432
     env:
-      username:  POSTGRES_USER
-      secretkeyrefname: db-secret 
-      secretkeyrefkey:  POSTGRES_USER
+      username: POSTGRES_USER
+      secretkeyrefname: db-secret
+      secretkeyrefkey: POSTGRES_USER
       passname: POSTGRES_PASSWORD
-      secretkeyrefkeypass:  POSTGRES_PASSWORD
+      secretkeyrefkeypass: POSTGRES_PASSWORD
       db_name: POSTGRES_DB
-      db_value: usersdb 
+      db_value: usersdb
     volname: postgres-storage
     volmountpath: /var/lib/postgresql/data
     storageclassname: postgres-storage
     storage: 1Gi
     accessmode: ["ReadWriteOnce"]
-  order-db: 
+  order-db:
     apiVersion: apps/v1
     kind: StatefulSet
     name: postgres-ord
@@ -352,74 +339,69 @@ st:
     containerimage: postgres:15-alpine
     containerport: 5432
     env:
-      username:  POSTGRES_USER
-      secretkeyrefname: db-secret 
-      secretkeyrefkey:  POSTGRES_USER
+      username: POSTGRES_USER
+      secretkeyrefname: db-secret
+      secretkeyrefkey: POSTGRES_USER
       passname: POSTGRES_PASSWORD
-      secretkeyrefkeypass:  POSTGRES_PASSWORD
+      secretkeyrefkeypass: POSTGRES_PASSWORD
       db_name: POSTGRES_DB
-      db_value: ordersdb 
+      db_value: ordersdb
     volname: postgres-storage
     volmountpath: /var/lib/postgresql/data
     storageclassname: postgres-storage
     storage: 1Gi
     accessmode: ["ReadWriteOnce"]
-
-storagclass: 
+storagclass:
   apiVersion: storage.k8s.io/v1
   kind: StorageClass
-  name: postgres-storage 
-  provisioner: k8s.io/minikube-hostpath 
-  reclaimPolicy: Retain 
-  volumeBindingMode: Immediate 
-  allowVolumeExpansion: true 
-
-
+  name: postgres-storage
+  provisioner: k8s.io/minikube-hostpath
+  reclaimPolicy: Retain
+  volumeBindingMode: Immediate
+  allowVolumeExpansion: true
 egress:
-  frontend-to-gateway: 
+  frontend-to-gateway:
     apiVersion: networking.k8s.io/v1
     kind: NetworkPolicy
     name: frontend-to-gateway-egress
-    app: frontend 
-    targetapp: gateway 
-    port: 3000 
-    policytype: Egress 
+    app: frontend
+    targetapp: gateway
+    port: 3000
+    policytype: Egress
   gateway-to-order-service:
     apiVersion: networking.k8s.io/v1
     kind: NetworkPolicy
     name: gateway-to-user-service-egress
     app: gateway
-    targetapp: user-service 
+    targetapp: user-service
     port: 3001
-    policytype: Egress 
-  gateway-to-user-service: 
+    policytype: Egress
+  gateway-to-user-service:
     apiVersion: networking.k8s.io/v1
     kind: NetworkPolicy
     name: gateway-to-order-service-egress
     app: gateway
-    targetapp: order-service 
+    targetapp: order-service
     port: 3002
-    policytype: Egress 
+    policytype: Egress
   userservice-to-userdb:
     apiVersion: networking.k8s.io/v1
     kind: NetworkPolicy
     name: user-service-to-order-service-egress
-    app: user-service 
-    targetapp: postgres-user  
+    app: user-service
+    targetapp: postgres-user
     port: 5432
-    policytype: Egress 
-  orderservice-to-orderdb: 
+    policytype: Egress
+  orderservice-to-orderdb:
     apiVersion: networking.k8s.io/v1
     kind: NetworkPolicy
     name: order-service-to-order-service-egress
-    app: order-service 
-    targetapp: postgres-ord 
+    app: order-service
+    targetapp: postgres-ord
     port: 5432
-    policytype: Egress 
-
-
-ingress: 
-  frontend-to-gateway: 
+    policytype: Egress
+ingress:
+  frontend-to-gateway:
     apiVersion: networking.k8s.io/v1
     kind: NetworkPolicy
     name: frontend-to-gateway-ingress
@@ -433,16 +415,16 @@ ingress:
     name: gatway-to-userservice-ingress
     app: user-service
     targetapp: gateway
-    port: 3001 
-    policytype: Ingress 
+    port: 3001
+    policytype: Ingress
   gateway-to-order-service:
     apiVersion: networking.k8s.io/v1
     kind: NetworkPolicy
     name: gatway-to-orderservice-ingress
     app: order-service
     targetapp: gateway
-    port: 3002 
-    policytype: Ingress 
+    port: 3002
+    policytype: Ingress
   user-service-to-userdb:
     apiVersion: networking.k8s.io/v1
     kind: NetworkPolicy
@@ -450,62 +432,58 @@ ingress:
     app: postgres-user
     targetapp: user-service
     port: 5432
-    policytype: Ingress 
-  order-service-to-orderdb: 
+    policytype: Ingress
+  order-service-to-orderdb:
     apiVersion: networking.k8s.io/v1
     kind: NetworkPolicy
     name: orderservice-to-orderdb-ingress
     app: postgres-ord
     targetapp: order-service
     port: 5432
-    policytype: Ingress 
-
-
-pdb: 
-  frontend: 
+    policytype: Ingress
+pdb:
+  frontend:
     apiVersion: policy/v1
-    kind: PodDisruptionBudget 
+    kind: PodDisruptionBudget
     name: frontend-pdb
-    minavailable: 1 
-    app: frontend 
-  gateway: 
+    minavailable: 1
+    app: frontend
+  gateway:
     apiVersion: policy/v1
-    kind: PodDisruptionBudget 
+    kind: PodDisruptionBudget
     name: gateway-pdb
-    minavailable: 1 
+    minavailable: 1
     app: gateway
-  user-service: 
+  user-service:
     apiVersion: policy/v1
-    kind: PodDisruptionBudget 
+    kind: PodDisruptionBudget
     name: user-service-pdb
-    minavailable: 1 
-    app: user-service  
-  order-service: 
+    minavailable: 1
+    app: user-service
+  order-service:
     apiVersion: policy/v1
-    kind: PodDisruptionBudget 
+    kind: PodDisruptionBudget
     name: order-service-pdb
-    minavailable: 1 
+    minavailable: 1
     app: order-service
-
 #ingress configuration 
-
-ingressapp: 
-  apiVersion: networking.k8s.io/v1 
-  kind: Ingress 
+ingressapp:
+  apiVersion: networking.k8s.io/v1
+  kind: Ingress
   name: app-ingress
-  bodysize: 10m 
-  readtimeout: 60 
-  sendtimeout: 60 
+  bodysize: 10m
+  readtimeout: 60
+  sendtimeout: 60
   limitconnections: 100
   limitrps: 200
   limitrpm: 100
   limitbrustmultiplier: 50
-  ingressclassname: nginx 
+  ingressclassname: nginx
   defbackendname: def-svc
-  defbackendport: 80 
+  defbackendport: 80
   hostname: micro-dash.local
   secretname: micro-dash-tls
   path: /
-  pathtype: Prefix 
-  backendservicename: frontend-service 
+  pathtype: Prefix
+  backendservicename: frontend-service
   port: 80
