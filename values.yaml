@@ -12,7 +12,7 @@ frontend:
   name: frontend
   replicas: 1
   imgname: frontend
-  Tag: 9e07e71
+  Tag: CD:1
   port: 80
   configMap: nginx-config
   resources:
@@ -37,7 +37,7 @@ gateway:
   name: gateway
   replicas: 1
   imgname: gateway
-  Tag: ci-8
+  Tag: CD:1
   port: 3000
   user_svc_url: http://user-service-svc:3001
   ord_svc_url: http://order-service-svc:3002
@@ -66,7 +66,7 @@ OrdUsrSer:
     name: user-service
     replicas: 1
     imgname: user-service
-    Tag: ci-7
+    Tag: CD:1
     port: 3001
     svcname: postgres-service
     env:
