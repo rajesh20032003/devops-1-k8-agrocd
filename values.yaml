@@ -112,7 +112,7 @@ OrdUsrSer:
     name: order-service
     replicas: 1
     imgname: order-service
-    Tag: ci-7
+    Tag: CD-1
     port: 3002
     svcname: postgres-service-ord
     env:
