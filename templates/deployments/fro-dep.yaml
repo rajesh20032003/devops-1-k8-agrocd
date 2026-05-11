@@ -21,7 +21,7 @@ spec:
       #           app: {{ .Values.frontend.name }}
       #       topologyKey: {{.Values.topologyKey }} 
       imagePullSecrets:
-      - name: {{.Values.harbor.SecretHarbor }}
+      # - name: {{.Values.harbor.SecretHarbor }}
       containers:
       - name: {{ .Values.frontend.name }}
         image: {{.Values.harbor.commonRepo}}/{{.Values.frontend.imgname}}:{{.Values.frontend.Tag}}
