@@ -34,6 +34,8 @@ spec:
               key: {{$st.env.secretkeyrefkeypass}}
         - name: {{$st.env.db_name}}
           value: {{$st.env.db_value}}
+        - name: PGDATA
+          value: /var/lib/postgresql/data/pgdata
         volumeMounts:
         - name: {{$st.volname}}
           mountPath: {{$st.volmountpath}}
