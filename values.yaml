@@ -355,7 +355,7 @@ storagclass:
   apiVersion: storage.k8s.io/v1
   kind: StorageClass
   name: postgres-storage
-  provisioner: provisioner: ebs.csi.aws.com
+  provisioner: ebs.csi.aws.com
   reclaimPolicy: Retain
   volumeBindingMode: WaitForFirstConsumer
   allowVolumeExpansion: true
