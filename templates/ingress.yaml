@@ -65,3 +65,12 @@ spec:
                 name: frontend-service
                 port:
                   number: 80
+           - path: /grafana
+            pathType: Prefix
+            backend:
+              service:
+                name:  prometheus-grafana 
+                port:
+                  number: 3000
+          
+          
