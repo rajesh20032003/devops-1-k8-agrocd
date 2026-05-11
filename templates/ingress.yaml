@@ -1,40 +1,67 @@
-apiVersion: {{.Values.ingressapp.apiVersion}}
-kind: {{.Values.ingressapp.kind}} 
-metadata: 
-  name: {{.Release.Name}}-{{.Values.ingressapp.name}}
-  namespace: {{.Release.Namespace}}
-  annotations: 
-    nginx.ingress.kubernetes.io/proxy-body-size: {{.Values.ingressapp.bodysize | quote}}
-    nginx.ingress.kubernetes.io/proxy-read-timeout: {{.Values.ingressapp.readtimeout | quote }}
-    nginx.ingress.kubernetes.io/proxy-send-timeout: {{.Values.ingressapp.sendtimeout | quote }}
-    #limit connection
-    nginx.ingress.kubernetes.io/limit-connections: {{.Values.ingressapp.limitconnections | quote }}
-    #limit req per sec 
-    nginx.ingress.kubernetes.io/limit-rps: {{.Values.ingressapp.limitrps | quote}}
-    #limit req per min
-    nginx.ingress.kubernetes.io/limits-rpm: {{.Values.ingressapp.limitrpm | quote }}
-    #return 429 instead of 503 when limited
-    nginx.ingress.kubernetes.io/limit-burst-multiplier: {{.Values.ingressapp.limitbrustmultiplier | quote}}
+# apiVersion: {{.Values.ingressapp.apiVersion}}
+# kind: {{.Values.ingressapp.kind}} 
+# metadata: 
+#   name: {{.Release.Name}}-{{.Values.ingressapp.name}}
+#   namespace: {{.Release.Namespace}}
+#   annotations: 
+#     nginx.ingress.kubernetes.io/proxy-body-size: {{.Values.ingressapp.bodysize | quote}}
+#     nginx.ingress.kubernetes.io/proxy-read-timeout: {{.Values.ingressapp.readtimeout | quote }}
+#     nginx.ingress.kubernetes.io/proxy-send-timeout: {{.Values.ingressapp.sendtimeout | quote }}
+#     #limit connection
+#     nginx.ingress.kubernetes.io/limit-connections: {{.Values.ingressapp.limitconnections | quote }}
+#     #limit req per sec 
+#     nginx.ingress.kubernetes.io/limit-rps: {{.Values.ingressapp.limitrps | quote}}
+#     #limit req per min
+#     nginx.ingress.kubernetes.io/limits-rpm: {{.Values.ingressapp.limitrpm | quote }}
+#     #return 429 instead of 503 when limited
+#     nginx.ingress.kubernetes.io/limit-burst-multiplier: {{.Values.ingressapp.limitbrustmultiplier | quote}}
 
-spec: 
-  ingressClassName: {{.Values.ingressapp.ingressclassname}}
-  defaultBackend: 
-    service: 
-      name: {{.Values.ingressapp.defbackendname}} 
-      port: 
-        number: {{.Values.ingressapp.defbackendport}}
-  tls: 
-  - hosts:
-    -  {{.Values.ingressapp.hostname}}
-    secretName: {{.Values.ingressapp.secretname}}
+# spec: 
+#   ingressClassName: {{.Values.ingressapp.ingressclassname}}
+#   defaultBackend: 
+#     service: 
+#       name: {{.Values.ingressapp.defbackendname}} 
+#       port: 
+#         number: {{.Values.ingressapp.defbackendport}}
+#   tls: 
+#   - hosts:
+#     -  {{.Values.ingressapp.hostname}}
+#     secretName: {{.Values.ingressapp.secretname}}
+#   rules:
+#   - host: {{.Values.ingressapp.hostname}}
+#     http:
+#       paths:
+#         - path: {{.Values.ingressapp.path}}
+#           pathType: {{.Values.ingressapp.pathtype}}
+#           backend:
+#             service:
+#               name: {{.Values.ingressapp.backendservicename}}
+#               port:
+#                 number: {{.Values.ingressapp.port}}
+
+
+
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: native-aws-alb-ingress
+  namespace: md
+  annotations:
+    # 1. Tell AWS to build an Application Load Balancer
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    # 2. Tell AWS to route traffic directly to your pod IPs (way faster)
+    alb.ingress.kubernetes.io/target-type: ip
+spec:
+  # THIS IS THE KEY: Tell Kubernetes to use the AWS Controller!
+  ingressClassName: alb
   rules:
-  - host: {{.Values.ingressapp.hostname}}
-    http:
-      paths:
-        - path: {{.Values.ingressapp.path}}
-          pathType: {{.Values.ingressapp.pathtype}}
-          backend:
-            service:
-              name: {{.Values.ingressapp.backendservicename}}
-              port:
-                number: {{.Values.ingressapp.port}}
+    - http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: frontend-service
+                port:
+                  number: 80
