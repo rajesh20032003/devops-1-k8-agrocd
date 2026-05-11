@@ -348,7 +348,7 @@ st:
       db_value: ordersdb
     volname: postgres-storage
     volmountpath: /var/lib/postgresql/data
-    storageclassname: gp2
+    storageclassname: postgres-storage
     storage: 1Gi
     accessmode: ["ReadWriteOnce"]
 storagclass:
