@@ -12,3 +12,13 @@ spec:
     matchLabels:
       app: {{$pdb.app}} 
 {{ end }}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: grafana-external
+  namespace: md
+spec:
+  type: ExternalName
+  externalName: prometheus-grafana.monitoring.svc.cluster.local
