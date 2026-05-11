@@ -71,6 +71,6 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: prometheus-grafana
+                name: prometheus-grafana.monitoring.svc.cluster.local
                 port:
                   number: 3000
