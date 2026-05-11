@@ -48,12 +48,13 @@ metadata:
   name: native-aws-alb-ingress
   namespace: md
   annotations:
-    # 1. Tell AWS to build an Application Load Balancer
     alb.ingress.kubernetes.io/scheme: internet-facing
-    # 2. Tell AWS to route traffic directly to your pod IPs (way faster)
     alb.ingress.kubernetes.io/target-type: ip
+
+    # Optional but recommended
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP":80}]'
+
 spec:
-  # THIS IS THE KEY: Tell Kubernetes to use the AWS Controller!
   ingressClassName: alb
   rules:
     - http:
@@ -65,12 +66,11 @@ spec:
                 name: frontend-service
                 port:
                   number: 80
-           - path: /grafana
+
+          - path: /grafana
             pathType: Prefix
             backend:
               service:
-                name:  prometheus-grafana 
+                name: prometheus-grafana
                 port:
                   number: 3000
-          
-          
