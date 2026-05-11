@@ -9,6 +9,4 @@ provisioner: {{.Values.storagclass.provisioner}}
 reclaimPolicy: {{.Values.storagclass.reclaimPolicy}}
 volumeBindingMode: {{.Values.storagclass.volumeBindingMode}} 
 allowVolumeExpansion: {{.Values.storagclass.allowVolumeExpansion}}
-parameters:
-  type: gp3
-  fsType: ext4
+
